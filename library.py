@@ -1,9 +1,25 @@
 from book import Book
-
+import csv
 
 class Library:
-    def __init__(self):
+    def __init__(self, library_name):
         self.book_list: list[Book] = []
+        self.library_name = library_name
+        
+    def get_library_name(self):
+        return self.library_name
+    
+    def set_library_name(self, new_name:str):
+        while True:
+            if new_name.strip():
+                self.library_name = new_name
+                break
+            else:
+                print("Invalid name, try again")
+            
+    # TODO: Edit add book system
+    def add_book_simplified(self, book_to_add):
+        self.book_list.append(book_to_add)
 
     # Add a book to the library
     def add_book(self, book_to_add: Book):
@@ -27,10 +43,11 @@ class Library:
                 else:
                     print("Invalid input. Add book failed.\n")
                     return
+            else:
+                self.book_list.append(book_to_add)
         # If library is empty, add book
         else:
             self.book_list.append(book_to_add)
-            print(f'{book_to_add.title} was successfully added to the library.\n')
 
     # Remove a book from the library
     def remove_book(self, index):
@@ -45,14 +62,53 @@ class Library:
     def seek_book(self, index):
         if self.book_list:
             return self.book_list[index].title
-
-    # List all books in the library
-    def print_all_books(self, library_name):
-        print(f'{library_name}\n')
+        
+    def load_books(self, filename):
+        with open(filename, 'r', newline='') as file:
+            reader = csv.reader(file, delimiter= '\t')
+            # Skips the header row
+            next(reader)
+            
+            for row in reader:
+                # Avoiding empty rows
+                if row:
+                    title, author, read_status, owned_status = row
+                    # converts to boolean
+                    # read_status = read_status.strip().lower() == 'true'
+                    if read_status.strip().lower() == "true":
+                        read_status = True
+                    else: 
+                        read_status = False
+                    if owned_status.strip().lower() == "true":
+                        owned_status = True
+                    else: 
+                        owned_status = False
+                    
+                    book = Book(title, author, read_status, owned_status)
+                    self.book_list.append(book)
+                    
+    def save_books(self, filename):
+        # Open the file in writing mode
+        with open(f'{filename}.csv', 'w', newline='') as file:
+            writer = csv.writer(file, delimiter= '\t')
+            
+            # Write headers
+            writer.writerow(['title', 'author', 'read_status', 'owned_status'])
+            
+            # Loop through the library object and write data to file
+            for book in self.book_list:
+                writer.writerow([book.title, book.author, book.read_status, book.owned_status])
+                print(f'{book.title} successfully added!')
+                
+        print("Books successfully saved to file!\n")
+                    
+    # Prints all books in the library
+    def print_all_books(self):
+        print(f'{self.library_name}\n')
         if self.book_list:
             # Enumerate function loops through an interable while keeping track of the index for the current item.
             for index, book in enumerate(self.book_list):
-                print(f'\nID:{index}\n{book}')
+                print(f'ID:{index}\n{book}\n')
         else:
             print("No books in library")
 
@@ -136,5 +192,10 @@ class Library:
             # Lambda function creates a single use nameless one line function.
             # Provide book to the function as a variable, which we use to sort via book.title
             self.book_list.sort(key=lambda book: book.title.lower())
+            print("Library sorted.")
         else:
             print("No books in library\n")
+
+    # Clear the contents of the library
+    def wipe(self):
+        self.book_list.clear()
