@@ -3,36 +3,49 @@ from library import Library
 
 
 def main():
+    library_name = input("'Owdy! What would you like to name your library?").strip()
     my_library = Library()
-
-    while True:
-        my_library.add_book(get_book_details())
-
-        # If no then break out
-        if not get_yn_input("Would you like to add another book? (y/n)\n"):
-            break
 
     while True:
         display_actions()
         user_action = input("Choice: ").strip()
         match user_action:
             case '1':
-                my_library.print_all_books()
+                my_library.print_all_books(library_name)
             case '2':
-                my_library.add_book(get_book_details())
+                while True:
+                    my_library.add_book(get_book_details())
+
+                    # If no then break out
+                    if not get_yn_input("Would you like to add another book? (y/n)\n"):
+                        break
             case '3':
                 while True:
                     try:
-                        my_library.print_all_books()
-                        index = int(input("If you would like to cancel, enter any letter.\nWhich book would you like to remove? (Type the ID): ").strip())
-                        my_library.remove_book(index)
-                        break
+                        # There is only 1 book in the list
+                        if len(my_library.book_list) == 1:
+                            # Ask for confirmation
+                            if confirmation(f'Are you sure you would like to delete {my_library.seek_book(0)}?\n'):
+                                # Delete single book
+                                my_library.remove_book(0)
+                            else:
+                                print("Canceling deletion of book")
+                                break
+                        else:
+                            my_library.print_all_books()
+                            index = int(input(
+                                "If you would like to exit delete book mode, enter any alphabetical letter.\nWhich book would you like to remove? (Type the ID): ").strip())
+                            if confirmation(f'Are you sure you would like to delete {my_library.seek_book(index)}'):
+                                my_library.remove_book(index)
+                            else:
+                                print("Exiting delete book mode...")
+                                break
                     except ValueError:
                         print()
                         break
-                        
+
             case '4':
-                book_to_search = input("What is the title of the book? ")
+                book_to_search = input("What is the title of the book?\n")
                 print(my_library.search_by_title(book_to_search))
             case '5':
                 my_library.sort_alphabetically()
@@ -81,6 +94,17 @@ def get_book_details():
     owned = get_yn_input("Do you own this book? (y/n): ")
 
     return Book(title, author, read, owned)
+
+
+def confirmation(prompt):
+    while True:
+        confirmation: bool = input(prompt).strip().lower()
+        if confirmation in ("yes", 'y'):
+            return True
+        elif confirmation in ("no", "n"):
+            return False
+        else:
+            print("Invalid input, please try again.")
 
 
 if __name__ == "__main__":
