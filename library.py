@@ -1,22 +1,23 @@
 from book import Book
 import csv
 
+
 class Library:
     def __init__(self, library_name):
         self.book_list: list[Book] = []
         self.library_name = library_name
-        
+
     def get_library_name(self):
         return self.library_name
-    
-    def set_library_name(self, new_name:str):
+
+    def set_library_name(self, new_name: str):
         while True:
             if new_name.strip():
                 self.library_name = new_name
                 break
             else:
                 print("Invalid name, try again")
-            
+
     # TODO: Edit add book system
     def add_book_simplified(self, book_to_add):
         self.book_list.append(book_to_add)
@@ -33,7 +34,8 @@ class Library:
 
             # If duplicate was spotted then ask for confirmation
             if duplicate_spotted:
-                confirmation = input(f"Duplicate title spotted. Are you sure you want to add {book_to_add.title}? (y/n)\n").strip().lower()
+                confirmation = input(f"Duplicate title spotted. Are you sure you want to add {
+                                     book_to_add.title}? (y/n)\n").strip().lower()
                 if confirmation in ("yes", "y"):
                     self.book_list.append(book_to_add)
                     print(
@@ -62,13 +64,13 @@ class Library:
     def seek_book(self, index):
         if self.book_list:
             return self.book_list[index].title
-        
+
     def load_books(self, filename):
         with open(filename, 'r', newline='') as file:
-            reader = csv.reader(file, delimiter= '\t')
+            reader = csv.reader(file, delimiter='\t')
             # Skips the header row
             next(reader)
-            
+
             for row in reader:
                 # Avoiding empty rows
                 if row:
@@ -77,34 +79,34 @@ class Library:
                     # read_status = read_status.strip().lower() == 'true'
                     if read_status.strip().lower() == "true":
                         read_status = True
-                    else: 
+                    else:
                         read_status = False
                     if owned_status.strip().lower() == "true":
                         owned_status = True
-                    else: 
+                    else:
                         owned_status = False
-                    
+
                     book = Book(title, author, read_status, owned_status)
                     self.book_list.append(book)
-                    
+
     def save_books(self, filename):
         # Open the file in writing mode
         with open(f'{filename}.csv', 'w', newline='') as file:
-            writer = csv.writer(file, delimiter= '\t')
-            
+            writer = csv.writer(file, delimiter='\t')
+
             # Write headers
             writer.writerow(['title', 'author', 'read_status', 'owned_status'])
-            
+
             # Loop through the library object and write data to file
             for book in self.book_list:
-                writer.writerow([book.title, book.author, book.read_status, book.owned_status])
-                print(f'{book.title} successfully added!')
-                
+                writer.writerow(
+                    [book.title, book.author, book.read_status, book.owned_status])
+
         print("Books successfully saved to file!\n")
-                    
+
     # Prints all books in the library
     def print_all_books(self):
-        print(f'{self.library_name}\n')
+        print(f"Library: '{self.library_name}'\n")
         if self.book_list:
             # Enumerate function loops through an interable while keeping track of the index for the current item.
             for index, book in enumerate(self.book_list):
@@ -192,7 +194,7 @@ class Library:
             # Lambda function creates a single use nameless one line function.
             # Provide book to the function as a variable, which we use to sort via book.title
             self.book_list.sort(key=lambda book: book.title.lower())
-            print("Library sorted.")
+            print("Library sorted.\n")
         else:
             print("No books in library\n")
 
