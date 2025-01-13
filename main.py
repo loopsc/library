@@ -19,24 +19,60 @@ def main():
 
     # Loops until user correctly enters for new or existing library
     while my_library.get_library_name() == 'temp':
-        choose_new_existing()
+        choose_new_existing_library()
 
     while True:
         display_actions(my_library.get_library_name())
         user_action = input("Choice: ").strip().lower()
         print()
         match user_action:
+
             # Prints all books
             case '1':
                 my_library.print_all_books()
+
             # Add a new book
             case '2':
                 while True:
-                    my_library.add_book(get_book_details())
+                    book_to_add: Book = prompt_book_details()
+
+                    # If library is not empty
+                    if my_library.book_list:
+                        duplicate_spotted = False
+
+                        for book in my_library.book_list:
+                            if book.title.lower() == book_to_add.title.lower():
+                                duplicate_spotted = True
+
+                        # Checking if a duplicate entry is found
+                        if duplicate_spotted:
+                            confirmation = get_yn_input(
+                                f"\nDuplicate title spotted. Are you sure you want to add '{book_to_add.title}'? ")
+                            print()
+
+                            # Checking if the user would still like to add
+                            # if duplicate is found
+                            if confirmation:
+                                my_library.add_book(book_to_add)
+                                print(
+                                    f'\n{book_to_add.title} was successfully added to the library.\n')
+                                break
+                            else:
+                                print(f'{book_to_add.title} was not added.')
+                                print()
+                                break
+                        else:
+                            my_library.add_book(book_to_add)
+                    else:
+                        my_library.add_book(book_to_add)
+
+                    my_library.add_book(prompt_book_details())
 
                     # If no then break out
                     if not get_yn_input("\nWould you like to add another book? (y/n)\n"):
                         break
+
+            # Remove a book
             case '3':
                 while True:
                     try:
@@ -53,7 +89,7 @@ def main():
                             my_library.print_all_books()
                             index = int(input(
                                 "To exit enter [x]\nWhich book would you like to remove? (Enter the ID): ").strip())
-                            
+
                             if get_yn_input(f'Are you sure you would like to delete {my_library.seek_book(index)}'):
                                 my_library.remove_book(index)
                             else:
@@ -87,7 +123,7 @@ def main():
                     # Delete the temp csv file
                     delete_temp_csv()
                     # Ask user if create new file or choose existing file
-                    choose_new_existing()
+                    choose_new_existing_library()
                 elif not confirmation:
                     pass
             case 'x':
@@ -111,17 +147,16 @@ def display_actions(library_name):
     print("[5] Sort books alphabetically")
     # print("[5] Print all owned books")
     # print("[6] Print all unowned books")
+    print('---------------------------------------------')
     print('[s] Save books to file')
     print('[b] Go back')
     print("[x] Exit Program")
 
+
 # Helper function to get a yes/no answer and return true or false
-
-
 def get_yn_input(prompt):
     while True:
         user_input = input(prompt).strip().lower()
-        print()
         if user_input == "y" or user_input == "yes":
             return True
         elif user_input == "n" or user_input == "no":
@@ -129,11 +164,10 @@ def get_yn_input(prompt):
         else:
             print('Invalid input. Please try again')
 
+
 # Get the details from the user about a book
 # Returns a Book object
-
-
-def get_book_details():
+def prompt_book_details():
     title = input("Title: ")
     author = input("Author: ")
     read = get_yn_input("Have you read this? (y/n): ")
@@ -158,10 +192,9 @@ def create_list_libraries():
         libraries_list.append(os.path.splitext(os.path.basename(library))[0])
     return libraries_list
 
+
 # Asks the user of they want to create a new library or view an existing one
-
-
-def choose_new_existing():
+def choose_new_existing_library():
     while True:
         create_new = input(
             "Enter [n] to create new library or [e] for viewing an existing library.\nPress [x] to quit. ").strip().lower()
@@ -224,9 +257,8 @@ def choose_new_existing():
         else:
             print('Invalid input, please try again')
 
+
 # Delete the temp file
-
-
 def delete_temp_csv():
     try:
         os.remove('temp.csv')

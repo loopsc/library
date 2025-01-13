@@ -19,37 +19,8 @@ class Library:
                 print("Invalid name, try again")
 
     # TODO: Edit add book system
-    def add_book_simplified(self, book_to_add):
+    def add_book(self, book_to_add):
         self.book_list.append(book_to_add)
-
-    # Add a book to the library
-    def add_book(self, book_to_add: Book):
-        # If book list is not empty
-        if self.book_list:
-            duplicate_spotted = False
-            # Iterate through the entire library, and if there is a duplicate, set flag to True
-            for book in self.book_list:
-                if book.title.lower() == book_to_add.title.lower():
-                    duplicate_spotted = True
-
-            # If duplicate was spotted then ask for confirmation
-            if duplicate_spotted:
-                confirmation = input(f"Duplicate title spotted. Are you sure you want to add {
-                                     book_to_add.title}? (y/n)\n").strip().lower()
-                if confirmation in ("yes", "y"):
-                    self.book_list.append(book_to_add)
-                    print(
-                        f'{book_to_add.title} was successfully added to the library.\n')
-                elif confirmation in ("no", "n"):
-                    return
-                else:
-                    print("Invalid input. Add book failed.\n")
-                    return
-            else:
-                self.book_list.append(book_to_add)
-        # If library is empty, add book
-        else:
-            self.book_list.append(book_to_add)
 
     # Remove a book from the library
     def remove_book(self, index):
@@ -88,6 +59,7 @@ class Library:
 
                     book = Book(title, author, read_status, owned_status)
                     self.book_list.append(book)
+
 
     def save_books(self, filename):
         # Open the file in writing mode
