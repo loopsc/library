@@ -5,18 +5,19 @@ import csv
 class Library:
     def __init__(self, library_name):
         self.book_list: list[Book] = []
-        self.library_name = library_name
+        self._library_name = library_name
 
-    def get_library_name(self):
-        return self.library_name
+    @property
+    def library_name(self):
+        return self._library_name
 
-    def set_library_name(self, new_name: str):
-        while True:
-            if new_name.strip():
-                self.library_name = new_name
-                break
-            else:
-                print("Invalid name, try again")
+
+    @library_name.setter
+    def library_name(self, new_name: str):
+        if new_name.strip():
+            self._library_name = new_name
+        else: raise ValueError("Invalid. Name cannot be empty")
+
 
     # TODO: Edit add book system
     def add_book(self, book_to_add):
@@ -93,7 +94,8 @@ class Library:
             for book in self.book_list:
                 # Non strict search e.g 'test' will return, if user types 'est'
                 if title.lower().strip() in book.title.lower().strip():
-                    return f'\nBook found!\n{book}'
+                    return f'\nBook found!\n\n{book}\n'
+                else: return f'\nNot book {title} found.'
         else:
             return f'No books in library'
 

@@ -12,17 +12,18 @@ my_library = None
 
 def main():
     print('Howdy!')
-    if my_library.get_library_name() == 'temp':
-        pass
+    if my_library.library_name == 'temp':
+        # pass
+        print(f'library name: {my_library.library_name}')
     else:
-        print(my_library.get_library_name())
+        print(my_library.library_name())
 
     # Loops until user correctly enters for new or existing library
-    while my_library.get_library_name() == 'temp':
+    while my_library.library_name == 'temp':
         choose_new_existing_library()
 
     while True:
-        display_actions(my_library.get_library_name())
+        display_actions(my_library.library_name)
         user_action = input("Choice: ").strip().lower()
         print()
         match user_action:
@@ -112,10 +113,10 @@ def main():
             #     my_library.print_unowned_books()
             # Save books to file
             case 's':
-                my_library.save_books(f'{my_library.get_library_name()}')
+                my_library.save_books(f'{my_library.library_name}')
             case 'b':
                 confirmation = get_yn_input(
-                    "This will delete all newly added changes. Please ensure you have saved the data to file. Would you still like to go back? (y/n)")
+                    "This will delete all newly added changes. Please ensure you have saved the data to file. Would you still like to go back? (y/n) ")
                 # If yes
                 if confirmation:
                     my_library.wipe()
@@ -128,7 +129,7 @@ def main():
                     pass
             case 'x':
                 confirmation = get_yn_input(
-                    "This will delete all newly added changes. Please ensure you have saved the data to file. Would you still like to go back? (y/n)")
+                    "This will delete all newly added changes. Please ensure you have saved the data to file. Would you still like to go back? (y/n) ")
                 if confirmation:
                     print("Exiting program...")
                     delete_temp_csv()
@@ -149,7 +150,7 @@ def display_actions(library_name):
     # print("[6] Print all unowned books")
     print('---------------------------------------------')
     print('[s] Save books to file')
-    print('[b] Go back')
+    print('[b] Choose another library')
     print("[x] Exit Program")
 
 
@@ -205,27 +206,27 @@ def choose_new_existing_library():
         # Creating a new library
         if create_new == "new" or create_new == "n":
 
-            library_name = input(
+            input_library_name = input(
                 "\nWhat would you like to name your library?\nOr press [x] to quit. ").strip()
 
             duplicate_flag = False
 
-            if library_name == "x" or library_name == "X":
+            if input_library_name == "x" or input_library_name == "X":
                 # Go back to the start of the first while loop
                 break
             else:
                 for library in existing_libraries:
-                    if library == library_name:
+                    if library == input_library_name:
                         duplicate_flag = True
 
                 if duplicate_flag:
                     print("Invalid name. This library already exists.")
                 else:
-                    my_library.set_library_name(library_name)
+                    my_library.library_name = input_library_name
 
-                    print(f"Welcome to {library_name}.")
+                    print(f"Welcome to {my_library.library_name}.")
 
-                    with open(f'{library_name}.csv', 'w') as file:
+                    with open(f'{input_library_name}.csv', 'w') as file:
                         pass
             break
 
@@ -244,7 +245,7 @@ def choose_new_existing_library():
                 print()
 
                 if f'{get_existing_library}' in existing_libraries:
-                    my_library.set_library_name(get_existing_library)
+                    my_library.library_name = get_existing_library
                     # Load books from csv into the library object
                     my_library.load_books(f'{get_existing_library}.csv')
                     break
