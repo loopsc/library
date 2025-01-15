@@ -241,7 +241,7 @@ def choose_new_existing_library():
             while True:
                 # Ask the user, which library they want to view
                 get_existing_library = input(
-                    "\nWhat is the name of the library you wish to view?\n").strip().lower()
+                    "\nWhat is the name of the library you wish to view?\nOr press [x] to quit. ").strip().lower()
                 print()
 
                 if f'{get_existing_library}' in existing_libraries:
@@ -249,9 +249,13 @@ def choose_new_existing_library():
                     # Load books from csv into the library object
                     my_library.load_books(f'{get_existing_library}.csv')
                     break
+                elif get_existing_library == "x" or get_existing_library == "X":
+                    break
                 else:
                     print(
-                        "\nThis library does not exist. Please ensure you have typed the name correctly")
+                        "This library does not exist. Please ensure you have typed the name correctly")
+                    
+                    
             break
         elif create_new == "x" or create_new == "X":
             exit()
