@@ -1,5 +1,6 @@
 from book import Book
 from library import Library
+import csv
 # os enables interaction with the file system
 import os
 # glob allows for matching of file extensions
@@ -13,8 +14,7 @@ my_library = None
 def main():
     print('Howdy!')
     if my_library.library_name == 'temp':
-        # pass
-        print(f'library name: {my_library.library_name}')
+        pass
     else:
         print(my_library.library_name())
 
@@ -41,14 +41,15 @@ def main():
                     if my_library.book_list:
                         duplicate_spotted = False
 
+                        # Loop through the list of books in library and if theres a duplicate, then flag it
                         for book in my_library.book_list:
                             if book.title.lower() == book_to_add.title.lower():
                                 duplicate_spotted = True
 
-                        # Checking if a duplicate entry is found
+                        # If duplicate flag is raise, ask user for confirmation if they still want to add the book
                         if duplicate_spotted:
                             confirmation = get_yn_input(
-                                f"\nDuplicate title spotted. Are you sure you want to add '{book_to_add.title}'? ")
+                                f"\nDuplicate title spotted. Are you sure you want to add '{book_to_add.title}'? (y/n) ")
                             print()
 
                             # Checking if the user would still like to add
@@ -62,15 +63,14 @@ def main():
                                 print(f'{book_to_add.title} was not added.')
                                 print()
                                 break
+                        # If library is empty and therefore no duplicates, then add book
                         else:
                             my_library.add_book(book_to_add)
                     else:
                         my_library.add_book(book_to_add)
 
-                    my_library.add_book(prompt_book_details())
-
                     # If no then break out
-                    if not get_yn_input("\nWould you like to add another book? (y/n)\n"):
+                    if not get_yn_input("\nWould you like to add another book? (y/n)\n", new_line=True):
                         break
 
             # Remove a book
@@ -155,15 +155,20 @@ def display_actions(library_name):
 
 
 # Helper function to get a yes/no answer and return true or false
-def get_yn_input(prompt):
+def get_yn_input(prompt, new_line = False):
     while True:
         user_input = input(prompt).strip().lower()
+        
+        if new_line:
+            print()
+            
         if user_input == "y" or user_input == "yes":
             return True
         elif user_input == "n" or user_input == "no":
             return False
         else:
             print('Invalid input. Please try again')
+            print()
 
 
 # Get the details from the user about a book
@@ -224,10 +229,13 @@ def choose_new_existing_library():
                 else:
                     my_library.library_name = input_library_name
 
-                    print(f"Welcome to {my_library.library_name}.")
+                    print(f"\nWelcome to {my_library.library_name}.\n")
 
                     with open(f'{input_library_name}.csv', 'w') as file:
-                        pass
+                        writer = csv.writer(file, delimiter='\t')
+
+                        # Write headers
+                        writer.writerow(['title', 'author', 'read_status', 'owned_status'])
             break
 
         # Editing an existing library

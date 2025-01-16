@@ -11,15 +11,15 @@ class Library:
     def library_name(self):
         return self._library_name
 
-
     @library_name.setter
     def library_name(self, new_name: str):
         if new_name.strip():
             self._library_name = new_name
-        else: raise ValueError("Invalid. Name cannot be empty")
-
+        else:
+            raise ValueError("Invalid. Name cannot be empty")
 
     # TODO: Edit add book system
+
     def add_book(self, book_to_add):
         self.book_list.append(book_to_add)
 
@@ -40,6 +40,7 @@ class Library:
     def load_books(self, filename):
         with open(filename, 'r', newline='') as file:
             reader = csv.reader(file, delimiter='\t')
+
             # Skips the header row
             next(reader)
 
@@ -60,7 +61,6 @@ class Library:
 
                     book = Book(title, author, read_status, owned_status)
                     self.book_list.append(book)
-
 
     def save_books(self, filename):
         # Open the file in writing mode
@@ -95,7 +95,8 @@ class Library:
                 # Non strict search e.g 'test' will return, if user types 'est'
                 if title.lower().strip() in book.title.lower().strip():
                     return f'\nBook found!\n\n{book}\n'
-                else: return f'\nNot book {title} found.'
+                else:
+                    return f'\nNot book {title} found.'
         else:
             return f'No books in library'
 
